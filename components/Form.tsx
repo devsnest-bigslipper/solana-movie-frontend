@@ -17,8 +17,54 @@ export const Form: FC = () => {
     }
 
     const handleTransactionSubmit = async (movie: Movie) => {
-        console.log(JSON.stringify(movie))
-    }
+        //console.log(JSON.stringify(movie))
+        if(!publicKey) {
+          alert("please connect the wallet");
+          return;
+        }
+        const buffer=movie.serialize();
+        const transaction=new web3.Transaction();
+        const [pda]=await web3.PublicKey.findProgramAddress(
+            [publicKey.toBuffer(),new TextEncoder().encode(movie)],
+            new web3.PublicKey(MOVIE_REVIEW_PROGRAM_ID)
+        );
+
+
+        const instruction = new web3.TransactionInstruction({
+          keys:[{
+              //Your account will pay the fees, so it's writing to the network.
+              pubkey:publicKey,
+              isSigner:true,
+              isWritable:true,
+            },
+            {
+              //the pda will store the movie review.
+              pubkey:pda,
+              isSigner:false,
+              isWritable:true,
+            },
+            {
+              // The system program will be used for creating PDA.
+              pubkey:web3SystemProgram.programId,
+              isSigner:false,
+              isWritable:false,
+            }
+          ],
+          data: buffer,
+          programId: new web3.PublicKey(MOVIE_REVIEW_PROGRAM_ID)
+        });
+    
+        transaction.add(instruction);
+        try{
+          let txid=await sendTransaction(transaction,connection);
+          console.log("Transaction submitted: https://explorer.solana.com/tx/${txid}?cluster=devnet");
+        }catch(e){
+          alert(JSON.stringfy(e));
+        }
+    }//handleTransactionSubmit
+
+    
+    
 
     return (
         <Box
@@ -72,4 +118,4 @@ export const Form: FC = () => {
             </form>
         </Box>
     );
-}
+}//Form FC=()
