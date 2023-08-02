@@ -1,6 +1,6 @@
-  import { FC } from 'react';
-  import { Movie } from '../models/Movie';
-  import { useState } from 'react';
+  import { FC } from "react";
+  import { Movie } from "../models/Movie";
+  import { useState } from "react";
   import { 
     Box,
     Button,
@@ -13,18 +13,18 @@
     NumberInputField,
     NumberInputStepper,
     Textarea 
-  } from '@chakra-ui/react';
+  } from "@chakra-ui/react";
 
   //new
   import * as web3 from "@solana/web3.js";
   import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
-  const MOVIE_REVIEW_PROGRAM_ID = 'CenYq6bDRB7p73EjsPEpiYN7uveyPUTdXkDkgUduboaN'
+  const MOVIE_REVIEW_PROGRAM_ID = "CenYq6bDRB7p73EjsPEpiYN7uveyPUTdXkDkgUduboaN";
 
   export const Form: FC = () => {
-    const [title, setTitle] = useState('')
+    const [title, setTitle] = useState("")
     const [rating, setRating] = useState(0)
-    const [message, setMessage] = useState('')
+    const [message, setMessage] = useState("")
 
     const { connection } = useConnection() ;
     const { publicKey, sendTransaction } = useWallet();
@@ -43,7 +43,7 @@
         }
         const buffer=movie.serialize();
         const transaction=new web3.Transaction();
-        const [pda]=await web3.PublicKey.findProgramAddress(
+        const [pda] = await web3.PublicKey.findProgramAddress(
             [publicKey.toBuffer(),new TextEncoder().encode(movie)],
             new web3.PublicKey(MOVIE_REVIEW_PROGRAM_ID)
         );//[pda]
@@ -65,7 +65,7 @@
             },
             {
               // The system program will be used for creating PDA.
-              pubkey:web3SystemProgram.programId,
+              pubkey: web3.SystemProgram.programId,
               isSigner:false,
               isWritable:false,
             }
@@ -97,27 +97,25 @@
         >
             <form onSubmit={handleSubmit}>
                 <FormControl isRequired>
-                    <FormLabel color='gray.200'>
-                        Movie Title
-                        </FormLabel>
+                    <FormLabel color="gray.200"> Movie Title </FormLabel>
                     <Input 
-                    id='title' 
-                    color='gray.400'
+                    id="title" 
+                    color="gray.400"
                     onChange={event => setTitle(event.currentTarget.value)}
-                />
+                    />
                 </FormControl>
                 <FormControl isRequired>
-                    <FormLabel color='gray.200'>
+                    <FormLabel color="gray.200">
                         Add your review
-                        </FormLabel>
+                    </FormLabel>
                     <Textarea 
-                        id='review' 
-                        color='gray.400'
+                        id="review" 
+                        color="gray.400"
                         onChange={event => setMessage(event.currentTarget.value)}
                     />
                 </FormControl>
                 <FormControl isRequired>
-                    <FormLabel color='gray.200'>
+                    <FormLabel color="gray.200">
                         Rating
                         </FormLabel>
                     <NumberInput 
@@ -125,8 +123,8 @@
                         min={1} 
                         onChange={(valueString) => setRating(parseInt(valueString))}
                     >
-                        <NumberInputField id='amount' color='gray.400' />
-                        <NumberInputStepper color='gray.400'>
+                        <NumberInputField id="amount" color="gray.400" />
+                        <NumberInputStepper color="gray.400">
                             <NumberIncrementStepper />
                             <NumberDecrementStepper />
                         </NumberInputStepper>
